@@ -4,6 +4,8 @@
  * [704] 二分查找
  */
 
+package main
+
 // @lc code=start
 func search(nums []int, target int) int {
 	left, right := 0, len(nums)-1
