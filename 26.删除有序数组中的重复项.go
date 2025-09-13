@@ -76,7 +76,20 @@ package main
 
 // @lc code=start
 func removeDuplicates(nums []int) int {
-    
+    n := len(nums)
+	if n <= 1 {
+		return n
+	}
+
+	s, f := 0, 1
+	for f < n {
+		if nums[s] != nums[f] {
+			s++
+			nums[s] = nums[f]
+		}
+		f++
+	}
+	return s + 1
 }
 // @lc code=end
 
