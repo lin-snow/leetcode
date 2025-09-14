@@ -68,68 +68,51 @@
 
 package main
 
+import "math"
+
 // @lc code=start
 func minWindow(s string, t string) string {
-	// 默认子串为s
-	sLen := len(s)
-	l := 0 // 滑动窗口起始位置
-	r := sLen-1
-
-	// 统计当前子串的数据
-	sMap := make(map[byte]int)
-	for i := 0; i < sLen; i++ {
-		sMap[s[i]]++
-	}
-
-	tMap := make(map[byte]int)
+	ori, cnt := map[byte]int{}, map[byte]int{}
 	for i := 0; i < len(t); i++ {
-		c := t[i]
-		tMap[c]++
-
-		if sMap[c] < tMap[c] {
-			return ""
-		}
+		ori[t[i]]++
 	}
+
+	sLen := len(s)
+	len := math.MaxInt32
+	ansL, ansR := -1, -1
 	
-	// 滑动窗口
-	for l <= r {
-		lc, rc := false, false
-
-		// 窗口向右缩小
-		if tMap[s[l]] == 0 { // 不是
-			sMap[s[l]]--
-			l++
-		} else if tMap[s[l]] < sMap[s[l]] { // 是
-			sMap[s[l]]--
-			l++
-		} else if tMap[s[l]] > sMap[s[l]] {
-			return ""
-		} else {
-			lc = true
+	check := func() bool {
+		for k, v := range ori {
+			if cnt[k] < v {
+				return false
+			}
 		}
 
-		// 窗口向左缩小
-		if tMap[s[r]] == 0 { // 不是
-			sMap[s[r]]--
-			r--
-		} else if tMap[s[r]] < sMap[s[r]] { // 是
-			sMap[s[r]]--
-			r--
-		} else if tMap[s[r]] > sMap[s[r]] {
-			return ""
-		} else {
-			rc = true
+		return true
+	}
+
+	for l, r := 0, 0; r < sLen; r++ {
+		if r < sLen && ori[s[r]] > 0 {
+			cnt[s[r]]++
 		}
 
-		if lc && rc {
-			break
+		for check() && l <= r {
+			if (r - l + 1) < len {
+				len = r - l + 1
+				ansL, ansR = l, l + len
+			}
+			if _, ok := ori[s[l]]; ok {
+				cnt[s[l]]--
+			}
+			l++
 		}
 	}
 
-	// 生成 result
-	result := s[l : r+1]
+	if ansL == -1 {
+		return ""
+	}
 
-	return result
+	return s[ansL : ansR]
 }
 // @lc code=end
 
