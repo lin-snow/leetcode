@@ -67,9 +67,52 @@ func NewMyQueue() *MyQueue {
 	}
 }
 
+func (q *MyQueue) Front() int {
+	return q.queue[0]
+}
+
+func (q *MyQueue) Back() int {
+	return q.queue[len(q.queue)-1]
+}
+
+func (q *MyQueue) Empty() bool {
+	return len(q.queue) == 0
+}
+
+func (q *MyQueue) Push(val int) {
+	for !q.Empty() && val > q.Back() {
+		q.queue = q.queue[:len(q.queue)-1]
+	}
+	q.queue = append(q.queue, val)
+} 
+
+func (q *MyQueue) Pop(val int) {
+	if !q.Empty() && val == q.Front() {
+		q.queue = q.queue[1:]
+	}
+}
+
 // @lc code=start
 func maxSlidingWindow(nums []int, k int) []int {
-    
+	queue := NewMyQueue()
+	length := len(nums)
+
+	res := make([]int, 0)
+	for i := 0; i < k; i++ {
+		queue.Push(nums[i])
+	}
+
+	res = append(res, queue.Front())
+
+	for i := k; i < length; i++ {
+		queue.Pop(nums[i-k])
+
+		queue.Push(nums[i])
+
+		res = append(res, queue.Front())
+	} 
+
+	return res
 }
 // @lc code=end
 
